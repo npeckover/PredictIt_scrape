@@ -33,7 +33,7 @@ def create_tables():
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS contract_offers (
+        CREATE TABLE contract_offers2 (
                 ticker_id INTEGER,
                 contract_id INTEGER,
                 contract_name VARCHAR(255),
@@ -45,7 +45,9 @@ def create_tables():
                 contract_best_sell_no REAL, 
                 contract_last_close_price REAL, 
                 contract_status VARCHAR(255)
-        )
+        );
+        DROP TABLE contract_offers;
+        ALTER TABLE contract_offers2 RENAME TO contract_offers
         """)
     # create tables one by one
     for command in commands:
@@ -70,6 +72,8 @@ for i in range(len(data)):
         ticker_status, ticker_image, ticker_url
         ) 
         values (%s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT(ticker_id) DO UPDATE 
+        SET ticker_id = excluded.ticker_id
         """, 
         (ticker_id, ticker_name, 
         ticker_short_name, ticker_timestamp, 
@@ -89,12 +93,12 @@ for i in range(len(data)):
         cur.execute(
             """
             INSERT INTO contract_offers (
-                ticker_id, contract_id,
-                contract_name, contract_short_name,
-                contract_last_trade_price,
-                contract_best_buy_yes, contract_best_buy_no, 
-                contract_best_sell_yes, contract_best_sell_no, 
-                contract_last_close_price, contract_status
+            ticker_id, contract_id,
+            contract_name, contract_short_name,
+            contract_last_trade_price,
+            contract_best_buy_yes, contract_best_buy_no, 
+            contract_best_sell_yes, contract_best_sell_no, 
+            contract_last_close_price, contract_status
             )
             values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
